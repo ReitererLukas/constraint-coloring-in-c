@@ -1,5 +1,6 @@
 #include "random.h"
 #include <algorithm>
+#include <climits>
 
 
 std::set<int> BRandom::randSubset(int numOfColors, bool allowEmpty) {
@@ -14,5 +15,10 @@ std::set<int> BRandom::randSubset(int numOfColors, bool allowEmpty) {
 
 int BRandom::randInt(int min, int max) {
     std::uniform_int_distribution<int> dist(min, max);
+    return dist(this->gen);
+}
+
+unsigned long BRandom::randLong() {
+    std::uniform_int_distribution<unsigned long> dist(0, ULONG_MAX);
     return dist(this->gen);
 }

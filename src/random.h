@@ -9,9 +9,11 @@ private:
     std::mt19937 gen;
 
 public:
-    BRandom(unsigned long seed = 42) : gen(seed) {}
+    BRandom(unsigned long seed) : gen(seed) {}
+    BRandom() : gen(std::random_device{}()) {}
 
     int randInt(int min, int max);
+    unsigned long randLong();
     std::set<int> randSubset(int numOfColors, bool allowEmpty = false);
 
 };

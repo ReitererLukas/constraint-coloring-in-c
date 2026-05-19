@@ -1,6 +1,6 @@
 CXX = g++
-CXXFLAGS = -Wall -Wextra -Wpedantic -Wshadow -Wconversion -Wsign-conversion \
-           -Wold-style-cast -Woverloaded-virtual -Wnon-virtual-dtor -Wdelete-non-virtual-dtor \
+CXXFLAGS = -Wall -Wextra -Wpedantic -Wshadow -Wconversion \
+           -Woverloaded-virtual -Wnon-virtual-dtor -Wdelete-non-virtual-dtor \
            -Wformat=2 -Winit-self -Wunused-variable -Wunused-function \
            -std=c++17 -O2
 SRCDIR = src
@@ -20,6 +20,9 @@ TEST_OBJECTS += $(OBJDIR)/test_runner_main.o
 
 .PHONY: all clean run test
 
+%:
+	@:
+
 all: $(TARGET)
 
 $(OBJDIR):
@@ -32,7 +35,7 @@ $(TARGET): $(OBJECTS)
 	$(CXX) $(CXXFLAGS) $(OBJECTS) -o $(TARGET)
 
 run: $(TARGET)
-	./$(TARGET)
+	./$(TARGET) $(filter-out $@,$(MAKECMDGOALS))
 
 test: $(TESTBIN)
 	./$(TESTBIN)

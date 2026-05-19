@@ -1,0 +1,21 @@
+#ifndef RANDOM_H
+#define RANDOM_H
+
+#include <set>
+#include <random>
+
+class BRandom {
+private:
+    std::mt19937 gen;
+
+public:
+    BRandom(unsigned long seed = 42) : gen(seed) {}
+
+    int randInt(int min, int max);
+    std::set<int> randSubset(int numOfColors, bool allowEmpty = false);
+
+};
+
+
+
+#endif

@@ -26,20 +26,22 @@ int generateOutputAFixed(int numOfColors, int numReductionColors, int* combinati
                 unsigned long centerIndex = std::hash<NodeEdgeKey>{}(centerKey);
                 unsigned long neighborIndex = std::hash<NodeEdgeKey>{}(neighborKey);
 
+                output[centerIndex].collections.clear();
                 if(centerColor < numReductionColors) {
-                    new (output+centerIndex) Output{{centerColor}};
+                    output[centerIndex].collections.insert(centerColor);
                 } else if (centerColor >= numReductionColors && neighborColor < numReductionColors) {
-                    new (output+centerIndex) Output{setMinus(numReductionColors, neighborColor)};
+                    setMinus(numReductionColors, neighborColor, output[centerIndex].collections);
                 } else {
-                    new (output+centerIndex) Output{rand.randSubset(numReductionColors)};
+                    rand.randSubset(numReductionColors, output[centerIndex].collections);
                 }
-
+                
+                output[neighborIndex].collections.clear();
                 if(neighborColor < numReductionColors) {
-                    new (output+neighborIndex) Output{{neighborColor}};
+                    output[neighborIndex].collections.insert(neighborColor);
                 } else if (neighborColor >= numReductionColors && centerColor < numReductionColors) {
-                    new (output+neighborIndex) Output{setMinus(numReductionColors, centerColor)};
+                    setMinus(numReductionColors, centerColor, output[neighborIndex].collections);
                 } else {
-                    new (output+neighborIndex) Output{rand.randSubset(numReductionColors, true)};
+                    rand.randSubset(numReductionColors, output[neighborIndex].collections, true);
                 }
             }
         }

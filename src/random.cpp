@@ -3,14 +3,20 @@
 #include <climits>
 
 
-std::set<int> BRandom::randSubset(int numOfColors, bool allowEmpty) {
+void BRandom::randSubset(int numOfColors, std::set<int>& set, bool allowEmpty) {
     std::vector<int> nums(numOfColors);
     std::iota(nums.begin(), nums.end(), 0); 
 
     std::shuffle(nums.begin(), nums.end(), this->gen);
 
     int k = this->randInt(allowEmpty?0:1,numOfColors);
-    return std::set<int>(nums.begin(), nums.begin() + k);;
+    int index = 0;
+    auto iter = nums.begin();
+    while(index < k && iter != nums.end()) {
+        set.insert(*iter);
+        iter++;
+        index++;
+    }
 }
 
 int BRandom::randInt(int min, int max) {

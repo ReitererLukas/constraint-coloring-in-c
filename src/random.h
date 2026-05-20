@@ -14,7 +14,7 @@ public:
 
     int randInt(int min, int max);
     unsigned long randLong();
-    std::set<int> randSubset(int numOfColors, bool allowEmpty = false);
+    void randSubset(int numOfColors, std::set<int>& set, bool allowEmpty = false);
 
 };
 

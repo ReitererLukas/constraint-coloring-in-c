@@ -6,7 +6,7 @@
 
 long fak(int n);
 void getCombinations(int numOfColors, int wo, int* arr);
-std::set<int> setMinus(int numOfColors, int wo);
+void setMinus(int numOfColors, int wo, std::set<int>& set);
 bool isDisjoint(std::set<int>& set1, std::set<int>& set2);
 
 #endif

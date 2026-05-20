@@ -34,7 +34,7 @@ struct std::hash<NodeEdgeKey> {
 
 
 struct Output {
-    std::set<int> collections;
+    std::set<int> collections{};
 };
 
 #endif

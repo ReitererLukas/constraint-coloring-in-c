@@ -25,15 +25,12 @@ void getCombinations(int numOfColors, int wo, int* arr) {
     }
 }
 
-std::set<int> setMinus(int numOfColors, int wo) {
-    std::set<int> set;
+void setMinus(int numOfColors, int wo, std::set<int>& set) {
     for(int i = 0; i< numOfColors; i++) {
         if(i != wo) {
             set.insert(i);
         }
     }
-
-    return set;
 }
 
 bool isDisjoint(std::set<int>& set1, std::set<int>& set2) {

@@ -16,7 +16,7 @@
 #include <fcntl.h>
 
 void loop() {
-   using clock = std::chrono::steady_clock;
+    using clock = std::chrono::steady_clock;
     int numOfColors = 9;
 
     clock::time_point start_time = clock::now();
@@ -54,15 +54,14 @@ void single() {
     delete[] combinations;
 }
 
-void threadedsingle(int id) {
+void threadedsingle(int id, int numOfColors) {
     BRandom rand{};
 
     int fd = shm_open("seed.txt", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
     unsigned long* ptr = (unsigned long*) mmap(NULL, sizeof(unsigned long), PROT_WRITE | PROT_READ, MAP_SHARED, fd, 0);
     close(fd);
     
-    int numOfColors = 6;
-    unsigned long iterations = 1000 * 1000;
+    unsigned long iterations = 1000 * 1000 * 10;
     
     long num_of_combs = (fak(numOfColors-1) /(fak(3)*fak(numOfColors-4)));
     long size_of_combs_arr = num_of_combs * 3;
@@ -79,12 +78,12 @@ void threadedsingle(int id) {
         }
 
         unsigned long seed = rand.randLong();
-        if(i%10000 == 0) {
-            std::cout << id << " " << i << " " << seed << std::endl;
+        if(i%100000 == 0) {
+            std::cout << id << " " << i << std::endl;
         }
         int numberOfNodes = generateOutput(numOfColors, 4, true, combinations, output, num_of_combs, seed);
         if(checkAllConstraints(numberOfNodes, output, false)) {
-            *ptr = seed;
+            *ptr = seed; // rc is not locked on purpose
         }
     }
 
@@ -93,10 +92,9 @@ void threadedsingle(int id) {
     munmap(ptr, sizeof(unsigned long));
 }
 
-void loopThreaded() {
-    pid_t processIds[10];
+void loopThreaded(int numOfColors, char** argv) {
+    pid_t processIds[12];
     int numberOfProcesses = sizeof(processIds)/sizeof(pid_t);
-    std::cout << numberOfProcesses << std::endl;
 
     int fd = shm_open("/seed.txt", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
     if(ftruncate(fd, sizeof(unsigned long)) == -1) {
@@ -109,7 +107,7 @@ void loopThreaded() {
     for(int i = 0; i < numberOfProcesses; i++) {
         pid_t pid = fork();
         if(pid == 0) {
-            threadedsingle(i+1);
+            threadedsingle(i+1, numOfColors);
             exit(0);
         }
         processIds[i] = pid;
@@ -119,20 +117,28 @@ void loopThreaded() {
         int status = 0;
         waitpid(processIds[i], &status, 0);
     }
-    
-    std::cout << "Found seed: " << *ptr << std::endl;
-    
+
+    unsigned long sol = *ptr;
     munmap(ptr, sizeof(unsigned long));
+    
+    std::cout << "Found seed: " << sol << std::endl;
+    if(sol == 0) {
+        std::cout << "Restart" << std::endl;
+        int re = execv(argv[0], argv);
+        std::cout << re << std::endl;
+    }
+    
 }
 
 
 int main(int argc, char* argv[]) {
-    if(argc == 1 || atoi(argv[1]) < 1 || atoi(argv[1]) > 3) {
+    if(argc == 1 || atoi(argv[1]) < 1 || atoi(argv[1]) > 4) {
         std::cout << "Mode missing" << std::endl;
         std::cout << "1. loop" << std::endl;
         std::cout << "2. single" << std::endl;
-        std::cout << "3. loop threaded" << std::endl;
-        return -1;
+        std::cout << "3. loop threaded (6 colors)" << std::endl;
+        std::cout << "4. loop threaded (9 colors)" << std::endl;
+        return 1;
     }
     
     int mode = atoi(argv[1]);
@@ -142,8 +148,9 @@ int main(int argc, char* argv[]) {
     } else if (mode == 2) {
         single();
     } else if (mode == 3) {
-        std::cout << "Start loop threaded" << std::endl;
-        loopThreaded();
+        loopThreaded(6, argv);
+    } else if (mode == 4) {
+        loopThreaded(9, argv);
     }
 
     return 0;

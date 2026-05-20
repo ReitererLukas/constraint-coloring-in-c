@@ -5,6 +5,7 @@
 #include "generator.h"
 #include "solver.h"
 #include <chrono>
+#include <fstream>
 
 // fork specific imports
 #include <unistd.h>
@@ -54,7 +55,7 @@ void single() {
     delete[] combinations;
 }
 
-void threadedsingle(int id, int numOfColors) {
+void threadedsingle(int id, int numOfColors, bool aFixed) {
     BRandom rand{};
 
     int fd = shm_open("seed.txt", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
@@ -81,7 +82,7 @@ void threadedsingle(int id, int numOfColors) {
         if(i%100000 == 0) {
             std::cout << id << " " << i << std::endl;
         }
-        int numberOfNodes = generateOutput(numOfColors, 4, true, combinations, output, num_of_combs, seed);
+        int numberOfNodes = generateOutput(numOfColors, 4, aFixed, combinations, output, num_of_combs, seed);
         if(checkAllConstraints(numberOfNodes, output, false)) {
             *ptr = seed; // rc is not locked on purpose
         }
@@ -92,7 +93,7 @@ void threadedsingle(int id, int numOfColors) {
     munmap(ptr, sizeof(unsigned long));
 }
 
-void loopThreaded(int numOfColors, char** argv) {
+void loopThreaded(int numOfColors, bool aFixed, char** argv) {
     pid_t processIds[12];
     int numberOfProcesses = sizeof(processIds)/sizeof(pid_t);
 
@@ -107,7 +108,7 @@ void loopThreaded(int numOfColors, char** argv) {
     for(int i = 0; i < numberOfProcesses; i++) {
         pid_t pid = fork();
         if(pid == 0) {
-            threadedsingle(i+1, numOfColors);
+            threadedsingle(i+1, numOfColors, aFixed);
             exit(0);
         }
         processIds[i] = pid;
@@ -124,10 +125,23 @@ void loopThreaded(int numOfColors, char** argv) {
     std::cout << "Found seed: " << sol << std::endl;
     if(sol == 0) {
         std::cout << "Restart" << std::endl;
-        int re = execv(argv[0], argv);
-        std::cout << re << std::endl;
+        execv(argv[0], argv);
+        std::cout << "Restart Failed" << std::endl;
+    } else {
+        std::string mode(argv[1]);
+        std::string fileName = "seed_for_" + std::to_string(numOfColors) + "_colors.txt";
+        if(aFixed) {
+            fileName = "seed_for_" + std::to_string(numOfColors) + "_colors_and_fixed_a.txt";
+        }
+        std::ofstream file(fileName);
+        if(!file) {
+            std::cout << "Cannot open file" << std::endl;
+            return;
+        }
+
+        file << sol << std::endl;
+        file.close();
     }
-    
 }
 
 
@@ -148,9 +162,9 @@ int main(int argc, char* argv[]) {
     } else if (mode == 2) {
         single();
     } else if (mode == 3) {
-        loopThreaded(6, argv);
+        loopThreaded(6, true, argv);
     } else if (mode == 4) {
-        loopThreaded(9, argv);
+        loopThreaded(9, true, argv);
     }
 
     return 0;

@@ -4,8 +4,10 @@
 #include "types.h"
 #include "util.h"
 
-bool checkNodeConstraint(NodeKey& node, Output* output);
+bool checkNodeConstraint(NodeKey& node, Output* output, int degree);
 bool checkEdgeConstraint(EdgeKey& edge, Output* output);
-bool checkAllConstraints(int numberOfNodes, Output* output, bool debug = false);
+bool checkAllConstraints(int numberOfNodes, Output* output, int degree, bool debug = false);
+bool checkIfAtLeastOneIsDisjoint(Collection& coll1, Collection& coll2);
+bool checkIfAllAreDisjoint(Collection& coll1, Collection& coll2);
 
 #endif

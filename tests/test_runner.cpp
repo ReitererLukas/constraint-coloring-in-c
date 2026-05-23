@@ -3,6 +3,7 @@
 #include "../src/solver.h"
 #include "../src/types.h"
 #include "../src/util.h"
+#include "../src/types.h"
 
 void testBasicNodeEdgeConstraints() {
     std::cout << "Testing basicNodeEdgeConstraints..." << std::endl;
@@ -17,14 +18,14 @@ void testBasicNodeEdgeConstraints() {
     NodeEdgeKey nek5{2, EdgeKey{0,2}};
     NodeEdgeKey nek6{3, EdgeKey{0,3}};
 
-    outputs[std::hash<NodeEdgeKey>{}(nek1)].collections.insert(0);
-    outputs[std::hash<NodeEdgeKey>{}(nek2)].collections.insert(0);
-    outputs[std::hash<NodeEdgeKey>{}(nek3)].collections.insert(0);
-    outputs[std::hash<NodeEdgeKey>{}(nek4)].collections.insert(1);
-    outputs[std::hash<NodeEdgeKey>{}(nek5)].collections.insert(1);
-    outputs[std::hash<NodeEdgeKey>{}(nek6)].collections.insert(1);
+    outputs[std::hash<NodeEdgeKey>{}(nek1)].collections = new Collections{std::vector<std::set<int>>{std::set<int>{0}}};
+    outputs[std::hash<NodeEdgeKey>{}(nek2)].collections = new Collections{std::vector<std::set<int>>{std::set<int>{0}}};
+    outputs[std::hash<NodeEdgeKey>{}(nek3)].collections = new Collections{std::vector<std::set<int>>{std::set<int>{0}}};
+    outputs[std::hash<NodeEdgeKey>{}(nek4)].collections = new Collections{std::vector<std::set<int>>{std::set<int>{1}}};
+    outputs[std::hash<NodeEdgeKey>{}(nek5)].collections = new Collections{std::vector<std::set<int>>{std::set<int>{1}}};
+    outputs[std::hash<NodeEdgeKey>{}(nek6)].collections = new Collections{std::vector<std::set<int>>{std::set<int>{1}}};
 
-    bool result = checkAllConstraints(4, outputs);
+    bool result = checkAllConstraints(4, outputs, 3, true);
     assert(result);
     
     delete[] outputs;
@@ -44,14 +45,14 @@ void testBasicNodeEdgeConstraintsFailNodes() {
     NodeEdgeKey nek5{2, EdgeKey{0,2}};
     NodeEdgeKey nek6{3, EdgeKey{0,3}};
 
-    outputs[std::hash<NodeEdgeKey>{}(nek1)].collections.insert(1);
-    outputs[std::hash<NodeEdgeKey>{}(nek2)].collections.insert(0);
-    outputs[std::hash<NodeEdgeKey>{}(nek3)].collections.insert(0);
-    outputs[std::hash<NodeEdgeKey>{}(nek4)].collections.insert(1);
-    outputs[std::hash<NodeEdgeKey>{}(nek5)].collections.insert(1);
-    outputs[std::hash<NodeEdgeKey>{}(nek6)].collections.insert(1);
+    outputs[std::hash<NodeEdgeKey>{}(nek1)].collections = new Collections{std::vector<std::set<int>>{std::set<int>{1}}};
+    outputs[std::hash<NodeEdgeKey>{}(nek2)].collections = new Collections{std::vector<std::set<int>>{std::set<int>{0}}};
+    outputs[std::hash<NodeEdgeKey>{}(nek3)].collections = new Collections{std::vector<std::set<int>>{std::set<int>{0}}};
+    outputs[std::hash<NodeEdgeKey>{}(nek4)].collections = new Collections{std::vector<std::set<int>>{std::set<int>{0}}};
+    outputs[std::hash<NodeEdgeKey>{}(nek5)].collections = new Collections{std::vector<std::set<int>>{std::set<int>{0}}};
+    outputs[std::hash<NodeEdgeKey>{}(nek6)].collections = new Collections{std::vector<std::set<int>>{std::set<int>{0}}};
 
-    bool result = checkAllConstraints(4, outputs);
+    bool result = checkAllConstraints(4, outputs, 3);
     assert(!result);
     
     delete[] outputs;
@@ -71,14 +72,14 @@ void testBasicNodeEdgeConstraintsFailEdges() {
     NodeEdgeKey nek5{2, EdgeKey{0,2}};
     NodeEdgeKey nek6{3, EdgeKey{0,3}};
 
-    outputs[std::hash<NodeEdgeKey>{}(nek1)].collections.insert(0);
-    outputs[std::hash<NodeEdgeKey>{}(nek2)].collections.insert(0);
-    outputs[std::hash<NodeEdgeKey>{}(nek3)].collections.insert(0);
-    outputs[std::hash<NodeEdgeKey>{}(nek4)].collections.insert(0);
-    outputs[std::hash<NodeEdgeKey>{}(nek5)].collections.insert(1);
-    outputs[std::hash<NodeEdgeKey>{}(nek6)].collections.insert(1);
+    outputs[std::hash<NodeEdgeKey>{}(nek1)].collections = new Collections{std::vector<std::set<int>>{std::set<int>{0}}};
+    outputs[std::hash<NodeEdgeKey>{}(nek2)].collections = new Collections{std::vector<std::set<int>>{std::set<int>{0}}};
+    outputs[std::hash<NodeEdgeKey>{}(nek3)].collections = new Collections{std::vector<std::set<int>>{std::set<int>{0}}};
+    outputs[std::hash<NodeEdgeKey>{}(nek4)].collections = new Collections{std::vector<std::set<int>>{std::set<int>{0}}};
+    outputs[std::hash<NodeEdgeKey>{}(nek5)].collections = new Collections{std::vector<std::set<int>>{std::set<int>{1}}};
+    outputs[std::hash<NodeEdgeKey>{}(nek6)].collections = new Collections{std::vector<std::set<int>>{std::set<int>{1}}};
 
-    bool result = checkAllConstraints(4, outputs);
+    bool result = checkAllConstraints(4, outputs, 3);
     assert(!result);
     
     delete[] outputs;

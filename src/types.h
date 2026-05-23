@@ -6,11 +6,14 @@
 #include <set>
 
 typedef int NodeKey;
+typedef std::vector<std::set<int>> Collection;
+typedef std::vector<Collection> Collections;
 
 struct EdgeKey {
     int first;
     int second;
 
+    int toIndex(int numOfColors, int numColorsReduction) const;
     bool operator==(const EdgeKey& other) const;
 };
 
@@ -34,7 +37,7 @@ struct std::hash<NodeEdgeKey> {
 
 
 struct Output {
-    std::set<int> collections{};
+    Collections* collections;
 };
 
 #endif

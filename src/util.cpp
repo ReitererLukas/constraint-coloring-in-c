@@ -1,5 +1,7 @@
 #include "util.h"
 
+#include <iostream>
+
 long fak(int n) {
     long res = 1;
     for(long i = 1; i <= n; i++) {
@@ -25,7 +27,10 @@ void getCombinations(int numOfColors, int wo, int* arr) {
     }
 }
 
-void setMinus(int numOfColors, int wo, std::set<int>& set) {
+void setMinus(int numOfColors, int wo, Collections* collections) {
+    // collections->push_back({});
+    // collections->at(0).push_back({});
+    std::set<int>& set = collections->at(0).at(0); 
     for(int i = 0; i< numOfColors; i++) {
         if(i != wo) {
             set.insert(i);

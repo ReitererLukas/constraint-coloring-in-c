@@ -8,6 +8,16 @@ bool NodeEdgeKey::operator==(const NodeEdgeKey& other) const {
     return node == other.node && edge == other.edge;
 }
 
+int EdgeKey::toIndex(int numOfColors, int numColorsReduction) const {
+    int index = (this->first - numColorsReduction) * (numOfColors - numColorsReduction - 1) + (this->second - numColorsReduction);
+
+    if(this->second > this->first) {
+        index -= 1;
+    }
+
+    return index;
+}
+
 std::size_t std::hash<EdgeKey>::operator()(const EdgeKey& key) const {
     return static_cast<std::size_t>(key.second - key.first - 1);
 }

@@ -3,6 +3,7 @@
 
 #include <set>
 #include <random>
+#include "types.h"
 
 class BRandom {
 private:

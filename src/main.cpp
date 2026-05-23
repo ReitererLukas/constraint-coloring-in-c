@@ -28,8 +28,8 @@ void loop() {
     int* combinations = new int[size_of_combs_arr];
 
     for(unsigned long i = 0; i < 1000; i++) {
-        int numberOfNodes = generateOutput(numOfColors, 4, true, combinations, output, num_of_combs,i);
-        checkAllConstraints(numberOfNodes, output, false);
+        int numberOfNodes = generateOutput(numOfColors, 4, true, combinations, output, num_of_combs, nullptr);
+        checkAllConstraints(numberOfNodes, output, 3);
     }
     
     delete[] combinations;
@@ -40,6 +40,7 @@ void loop() {
 
 void single() {
     int numOfColors = 6;
+    int numReductionColors = 4;
     
     long num_of_combs = (fak(numOfColors-1) /(fak(3)*fak(numOfColors-4)));
     long size_of_combs_arr = num_of_combs * 3;
@@ -47,12 +48,18 @@ void single() {
     Output* output = new Output[numOfColors*size_of_combs_arr*2];
     int* combinations = new int[size_of_combs_arr];
 
-    unsigned long seed = 15953429712108830733UL;
-    int numberOfNodes = generateOutput(numOfColors, 4, true, combinations, output, num_of_combs, seed);
+    int numberOfRandCollections = EdgeKey{numOfColors-1, numOfColors-2}.toIndex(numOfColors,numReductionColors) + 1;
+    Collections* givenRandArray = new Collections[numberOfRandCollections];
+    
+    int numberOfNodes = generateOutput(numOfColors, numReductionColors, true, combinations, output, num_of_combs, givenRandArray);
 
-    std::cout << checkAllConstraints(numberOfNodes, output, true) << std::endl;
+    randomizeCollections(numReductionColors, givenRandArray, numberOfRandCollections);
+
+    std::cout << checkAllConstraints(numberOfNodes, output, 3, true) << std::endl;
+
     delete[] output;
     delete[] combinations;
+    delete[] givenRandArray;
 }
 
 void threadedsingle(int id, int numOfColors, bool aFixed) {
@@ -82,8 +89,8 @@ void threadedsingle(int id, int numOfColors, bool aFixed) {
         if(i%100000 == 0) {
             std::cout << id << " " << i << std::endl;
         }
-        int numberOfNodes = generateOutput(numOfColors, 4, aFixed, combinations, output, num_of_combs, seed);
-        if(checkAllConstraints(numberOfNodes, output, false)) {
+        int numberOfNodes = generateOutput(numOfColors, 4, aFixed, combinations, output, num_of_combs, nullptr);
+        if(checkAllConstraints(numberOfNodes, output, 3)) {
             *ptr = seed; // rc is not locked on purpose
         }
     }

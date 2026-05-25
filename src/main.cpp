@@ -35,10 +35,15 @@ void loop() {
     int numberOfNodes = generateOutput(numOfColors, numReductionColors, true, combinations, output, num_of_combs, givenRandArray, degree);
     
     BRandom rand;
-    for(unsigned long i = 0; i < 1000; i++) {
+    for(unsigned long i = 0; i < 3; i++) {
+        std::cout << "============ " << i << " ============" << std::endl;
         long seed = rand.randLong();
         randomizeCollections(numReductionColors, givenRandArray, numberOfRandCollections, seed);
-        if(checkAllConstraints(numberOfNodes, output, degree)) {
+        for(int j = 0; j< numberOfRandCollections; j++) {
+            std::cout << "Index: " << j << std::endl;
+            printCollections(givenRandArray[j]);
+        }
+        if(checkAllConstraints(numberOfNodes, output, degree, true)) {
             std::cout << "seed: " << seed << std::endl;
         }
     }
@@ -81,7 +86,7 @@ void threadedsingle(int id, int numOfColors, int numReductionColors, int degree,
     unsigned long* ptr = (unsigned long*) mmap(NULL, sizeof(unsigned long), PROT_WRITE | PROT_READ, MAP_SHARED, fd, 0);
     close(fd);
     
-    unsigned long iterations = 1000 * 1000 * 10;
+    unsigned long iterations = 1000 * 1000 * 20;
     
     long num_of_combs = getNumberOfCombinations(numOfColors, degree);
     long size_of_combs_arr = num_of_combs * degree;
@@ -103,8 +108,8 @@ void threadedsingle(int id, int numOfColors, int numReductionColors, int degree,
         }
 
         unsigned long seed = rand.randLong();
-        if(i%100000 == 0) {
-            std::cout << id << " " << i << std::endl;
+        if(i%1000000 == 0) {
+            std::cout << id << " " << i << " " << seed << std::endl;
         }
         randomizeCollections(numReductionColors, givenRandArray, numberOfRandCollections, seed);
         if(checkAllConstraints(numberOfNodes, output, degree)) {
@@ -117,8 +122,8 @@ void threadedsingle(int id, int numOfColors, int numReductionColors, int degree,
     munmap(ptr, sizeof(unsigned long));
 }
 
-void loopThreaded(int numOfColors, int numReductionColors, int degree, bool aFixed, char** argv) {
-    pid_t processIds[12];
+void loopThreaded(int numOfColors, int numReductionColors, int degree, bool aFixed, bool restart, char** argv) {
+    pid_t processIds[11];
     int numberOfProcesses = sizeof(processIds)/sizeof(pid_t);
 
     int fd = shm_open("/seed.txt", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
@@ -147,11 +152,11 @@ void loopThreaded(int numOfColors, int numReductionColors, int degree, bool aFix
     munmap(ptr, sizeof(unsigned long));
     
     std::cout << "Found seed: " << sol << std::endl;
-    if(sol == 0) {
+    if(sol == 0 && restart) {
         std::cout << "Restart" << std::endl;
         execv(argv[0], argv);
         std::cout << "Restart Failed" << std::endl;
-    } else {
+    } else if(sol != 0) {
         std::string mode(argv[1]);
         std::string fileName = "seed_for_" + std::to_string(numOfColors) + "_colors.txt";
         if(aFixed) {
@@ -186,9 +191,9 @@ int main(int argc, char* argv[]) {
     } else if (mode == 2) {
         single();
     } else if (mode == 3) {
-        loopThreaded(6, 4, 3, true, argv);
+        loopThreaded(6, 4, 3, true, true, argv);
     } else if (mode == 4) {
-        loopThreaded(9, 4, 3, true, argv);
+        loopThreaded(9, 4, 3, true, false, argv);
     }
 
     return 0;

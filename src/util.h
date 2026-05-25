@@ -11,6 +11,7 @@ void getCombinations3(int numOfColors, int wo, int* arr);
 void getCombinations4(int numOfColors, int wo, int* arr);
 void setMinus(int numOfColors, int wo, Collections* collections);
 bool isDisjoint(std::set<int>& set1, std::set<int>& set2);
+void getIntersectingSet(std::set<int>& set1, std::set<int>& set2, std::set<int>& res);
 int getNumberOfCombinations(int numOfColors, int degree);
 
 void printSet(std::set<int>& s);

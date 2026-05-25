@@ -72,11 +72,11 @@ int generateOutput(int numOfColors, int numReductionColors, bool isAFixed, int* 
 void randomizeCollections(int numReductionColors, Collections* collections, int numberOfCollections, unsigned long seed) {
     BRandom rand{seed};
     
-    int minNumberOfCollections = 1;
-    int maxNumberOfCollections = 10;
+    int minNumberOfCollections = 2;
+    int maxNumberOfCollections = 7;
 
     int minNumberOfSubsets = 1;
-    int maxNumberOfSubsets = 5;
+    int maxNumberOfSubsets = 3;
 
     for(int i = 0; i < numberOfCollections; i++) {
         collections[i].clear();
@@ -85,11 +85,35 @@ void randomizeCollections(int numReductionColors, Collections* collections, int 
         
         for(int c = 0; c < numberOfCollectionsinCollection; c++) {
             collections[i].push_back({});
-            int numberOfSubsets = rand.randInt(minNumberOfSubsets, maxNumberOfSubsets);
-            for(int s = 0; s < numberOfSubsets; s++) {
-                collections[i].at(c).push_back({});
-                rand.randSubset(numReductionColors, collections[i].at(c).at(s));
+
+            bool correct = false;
+            while(!correct) {
+                collections[i].at(c).clear();
+
+                int numberOfSubsets = rand.randInt(minNumberOfSubsets, maxNumberOfSubsets);
+                for(int s = 0; s < numberOfSubsets; s++) {
+                    collections[i].at(c).push_back({});
+                    rand.randSubset(numReductionColors, collections[i].at(c).at(s));
+                }
+
+                std::set<int> intersectingSet;
+                correct = true;
+                int s1 = 0;
+                while(s1 < numberOfSubsets && correct) {
+                    int s2 = s1+1;
+                    while(s2 < numberOfSubsets && correct) {
+                        intersectingSet.clear();
+                        getIntersectingSet(collections[i].at(c).at(s1), collections[i].at(c).at(s2), intersectingSet);
+                        if(intersectingSet.size() > 1) {
+                            correct = false;
+                        }
+                        s2++;
+                    }
+                    s1++;
+                }
             }
+
         }
+
     }
 }

@@ -79,6 +79,24 @@ bool isDisjoint(std::set<int>& set1, std::set<int>& set2) {
     return true;
 }
 
+void getIntersectingSet(std::set<int>& set1, std::set<int>& set2, std::set<int>& res) {
+    auto it1 = set1.begin();
+    auto it2 = set2.begin();
+
+    while (it1 != set1.end() && it2 != set2.end()) {
+        if (*it1 == *it2) {
+            res.insert(*it1);
+        }
+
+        if (*it1 < *it2) {
+            it1++;
+        } else {
+            it2++;
+        }
+    }
+
+}
+
 void printSet(std::set<int>& s) {
     std::cout << "{";
     bool first = true;

@@ -41,7 +41,7 @@ int generateOutputAFixed(int numOfColors, int numReductionColors, int* combinati
                     output[centerIndex].collections = new Collections{std::vector<std::set<int>>{std::set<int>{}}};
                     setMinus(numReductionColors, neighborColor, output[centerIndex].collections);
                 } else {
-                    output[centerIndex].collections = &givenRandArray[EdgeKey{centerColor, neighborColor}.toIndex(numOfColors, numReductionColors)];
+                    output[centerIndex].collections = givenRandArray + EdgeKey{centerColor, neighborColor}.toIndex(numOfColors, numReductionColors);
                 }
                 
                 if(neighborColor < numReductionColors) {
@@ -51,7 +51,7 @@ int generateOutputAFixed(int numOfColors, int numReductionColors, int* combinati
                     output[neighborIndex].collections = new Collections{std::vector<std::set<int>>{std::set<int>{}}};
                     setMinus(numReductionColors, centerColor, output[neighborIndex].collections);
                 } else {
-                    output[neighborIndex].collections = &givenRandArray[EdgeKey{neighborColor, centerColor}.toIndex(numOfColors, numReductionColors)];
+                    output[neighborIndex].collections = givenRandArray + EdgeKey{neighborColor, centerColor}.toIndex(numOfColors, numReductionColors);
                 }
             }
         }

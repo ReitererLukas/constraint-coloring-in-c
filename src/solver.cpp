@@ -26,7 +26,6 @@ bool checkNodeConstraint(NodeKey& node, Output* output, int degree) {
         bool is_disjoint = true;
         auto c1 = out1->begin();
         
-        int counter = 0;
         while(c1 != out1->end() && is_disjoint) {
             auto c2 = out2->begin();
             while(c2 != out2->end() && is_disjoint) {
@@ -78,7 +77,6 @@ bool checkIfAtLeastOneIsDisjoint(Collection& coll1, Collection& coll2) {
 }
 
 bool checkIfAllAreDisjoint(Collection& coll1, Collection& coll2) {
-    int counter = 0;
     for(auto s1 = coll1.begin();
      s1 != coll1.end(); s1++) {
         for(auto s2 = coll2.begin(); s2 != coll2.end(); s2++) {

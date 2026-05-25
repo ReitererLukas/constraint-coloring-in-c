@@ -19,16 +19,18 @@
 void loop() {
     using clock = std::chrono::steady_clock;
     int numOfColors = 9;
-
+    int degree = 3;
+    int numReductionColors = 4;
+    
     clock::time_point start_time = clock::now();
-    long num_of_combs = (fak(numOfColors-1) /(fak(3)*fak(numOfColors-4)));
+    long num_of_combs = getNumberOfCombinations(numOfColors, degree);
     long size_of_combs_arr = num_of_combs * 3;
-
+    
     Output* output = new Output[numOfColors*size_of_combs_arr*2];
     int* combinations = new int[size_of_combs_arr];
-
+    
     for(unsigned long i = 0; i < 1000; i++) {
-        int numberOfNodes = generateOutput(numOfColors, 4, true, combinations, output, num_of_combs, nullptr);
+        int numberOfNodes = generateOutput(numOfColors, numReductionColors, true, combinations, output, num_of_combs, nullptr, degree);
         checkAllConstraints(numberOfNodes, output, 3);
     }
     
@@ -41,8 +43,9 @@ void loop() {
 void single() {
     int numOfColors = 6;
     int numReductionColors = 4;
+    int degree = 3;
     
-    long num_of_combs = (fak(numOfColors-1) /(fak(3)*fak(numOfColors-4)));
+    long num_of_combs = getNumberOfCombinations(numOfColors, degree);
     long size_of_combs_arr = num_of_combs * 3;
 
     Output* output = new Output[numOfColors*size_of_combs_arr*2];
@@ -51,7 +54,7 @@ void single() {
     int numberOfRandCollections = EdgeKey{numOfColors-1, numOfColors-2}.toIndex(numOfColors,numReductionColors) + 1;
     Collections* givenRandArray = new Collections[numberOfRandCollections];
     
-    int numberOfNodes = generateOutput(numOfColors, numReductionColors, true, combinations, output, num_of_combs, givenRandArray);
+    int numberOfNodes = generateOutput(numOfColors, numReductionColors, true, combinations, output, num_of_combs, givenRandArray, degree);
 
     randomizeCollections(numReductionColors, givenRandArray, numberOfRandCollections);
 
@@ -62,7 +65,7 @@ void single() {
     delete[] givenRandArray;
 }
 
-void threadedsingle(int id, int numOfColors, bool aFixed) {
+void threadedsingle(int id, int numOfColors, int degree, bool aFixed) {
     BRandom rand{};
 
     int fd = shm_open("seed.txt", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
@@ -71,7 +74,7 @@ void threadedsingle(int id, int numOfColors, bool aFixed) {
     
     unsigned long iterations = 1000 * 1000 * 10;
     
-    long num_of_combs = (fak(numOfColors-1) /(fak(3)*fak(numOfColors-4)));
+    long num_of_combs = getNumberOfCombinations(numOfColors, degree);
     long size_of_combs_arr = num_of_combs * 3;
     
     Output* output = new Output[numOfColors*size_of_combs_arr*2];
@@ -89,7 +92,7 @@ void threadedsingle(int id, int numOfColors, bool aFixed) {
         if(i%100000 == 0) {
             std::cout << id << " " << i << std::endl;
         }
-        int numberOfNodes = generateOutput(numOfColors, 4, aFixed, combinations, output, num_of_combs, nullptr);
+        int numberOfNodes = generateOutput(numOfColors, 4, aFixed, combinations, output, num_of_combs, nullptr, degree);
         if(checkAllConstraints(numberOfNodes, output, 3)) {
             *ptr = seed; // rc is not locked on purpose
         }
@@ -100,7 +103,7 @@ void threadedsingle(int id, int numOfColors, bool aFixed) {
     munmap(ptr, sizeof(unsigned long));
 }
 
-void loopThreaded(int numOfColors, bool aFixed, char** argv) {
+void loopThreaded(int numOfColors, int degree, bool aFixed, char** argv) {
     pid_t processIds[12];
     int numberOfProcesses = sizeof(processIds)/sizeof(pid_t);
 
@@ -115,7 +118,7 @@ void loopThreaded(int numOfColors, bool aFixed, char** argv) {
     for(int i = 0; i < numberOfProcesses; i++) {
         pid_t pid = fork();
         if(pid == 0) {
-            threadedsingle(i+1, numOfColors, aFixed);
+            threadedsingle(i+1, numOfColors, degree, aFixed);
             exit(0);
         }
         processIds[i] = pid;
@@ -169,9 +172,9 @@ int main(int argc, char* argv[]) {
     } else if (mode == 2) {
         single();
     } else if (mode == 3) {
-        loopThreaded(6, true, argv);
+        loopThreaded(6, 3, true, argv);
     } else if (mode == 4) {
-        loopThreaded(9, true, argv);
+        loopThreaded(9, 3, true, argv);
     }
 
     return 0;

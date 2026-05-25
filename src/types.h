@@ -17,22 +17,12 @@ struct EdgeKey {
     bool operator==(const EdgeKey& other) const;
 };
 
-template <>
-struct std::hash<EdgeKey> {
-    std::size_t operator()(const EdgeKey& p) const;
-};
-
-
 struct NodeEdgeKey {
     NodeKey node;
     EdgeKey edge;
-
+    
     bool operator==(const NodeEdgeKey& other) const;
-};
-
-template <>
-struct std::hash<NodeEdgeKey> {
-    std::size_t operator()(const NodeEdgeKey& p) const;
+    int toIndex(int degree) const;
 };
 
 

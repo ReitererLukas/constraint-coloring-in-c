@@ -5,7 +5,7 @@
 #include "util.h"
 
 bool checkNodeConstraint(NodeKey& node, Output* output, int degree);
-bool checkEdgeConstraint(EdgeKey& edge, Output* output);
+bool checkEdgeConstraint(EdgeKey& edge, Output* output, int degree);
 bool checkAllConstraints(int numberOfNodes, Output* output, int degree, bool debug = false);
 bool checkIfAtLeastOneIsDisjoint(Collection& coll1, Collection& coll2);
 bool checkIfAllAreDisjoint(Collection& coll1, Collection& coll2);

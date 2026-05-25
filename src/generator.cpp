@@ -2,29 +2,37 @@
 
 #include <iostream>
 
-int generateOutputAFixed(int numOfColors, int numReductionColors, int* combinations, Output* output, long num_of_combs, Collections* givenRandArray) {
+int generateOutputAFixed(int numOfColors, int numReductionColors, int* combinations, Output* output, long num_of_combs, Collections* givenRandArray, int degree) {
     int counter = 0;
     for(int centerColor = 0; centerColor < numOfColors; centerColor++) {
-        getCombinations(numOfColors, centerColor, combinations);
-        
+        if(degree == 3) {
+            getCombinations3(numOfColors, centerColor, combinations);
+        } else if(degree == 4) {
+            getCombinations4(numOfColors, centerColor, combinations);
+        }
         
         for(long pairIndex = 0; pairIndex < num_of_combs; pairIndex++) {
             if(centerColor < numReductionColors)
                 continue;
 
-            if(combinations[pairIndex*3+0] < numReductionColors && combinations[pairIndex*3+1] < numReductionColors && combinations[pairIndex*3+2] < numReductionColors)
+            bool smallerThanRedColors = true;
+            for(int i = 0; i < degree; i++) {
+               smallerThanRedColors = smallerThanRedColors && combinations[pairIndex*degree+i]; 
+            }
+            if(smallerThanRedColors) {
                 continue;
+            }
 
             int centerNode = counter++;
             
-            for(long index = 0; index < 3; index++) {
-                int neighborColor = combinations[pairIndex*3+index];
+            for(long index = 0; index < degree; index++) {
+                int neighborColor = combinations[pairIndex*degree+index];
                 int neighborNode = counter++;
 
                 NodeEdgeKey centerKey{centerNode, EdgeKey{centerNode,neighborNode}};
                 NodeEdgeKey neighborKey{neighborNode, EdgeKey{centerNode,neighborNode}};
-                unsigned long centerIndex = std::hash<NodeEdgeKey>{}(centerKey);
-                unsigned long neighborIndex = std::hash<NodeEdgeKey>{}(neighborKey);
+                unsigned long centerIndex = centerKey.toIndex(degree);
+                unsigned long neighborIndex = neighborKey.toIndex(degree);
 
                 if(centerColor < numReductionColors) {
                     output[centerIndex].collections = new Collections{std::vector<std::set<int>>{std::set<int>{}}};
@@ -33,7 +41,7 @@ int generateOutputAFixed(int numOfColors, int numReductionColors, int* combinati
                     output[centerIndex].collections = new Collections{std::vector<std::set<int>>{std::set<int>{}}};
                     setMinus(numReductionColors, neighborColor, output[centerIndex].collections);
                 } else {
-                    output[centerIndex].collections = givenRandArray + EdgeKey{centerColor, neighborColor}.toIndex(numOfColors, numReductionColors);
+                    output[centerIndex].collections = &givenRandArray[EdgeKey{centerColor, neighborColor}.toIndex(numOfColors, numReductionColors)];
                 }
                 
                 if(neighborColor < numReductionColors) {
@@ -43,7 +51,7 @@ int generateOutputAFixed(int numOfColors, int numReductionColors, int* combinati
                     output[neighborIndex].collections = new Collections{std::vector<std::set<int>>{std::set<int>{}}};
                     setMinus(numReductionColors, centerColor, output[neighborIndex].collections);
                 } else {
-                    output[neighborIndex].collections = givenRandArray + EdgeKey{neighborColor, centerColor}.toIndex(numOfColors, numReductionColors);
+                    output[neighborIndex].collections = &givenRandArray[EdgeKey{neighborColor, centerColor}.toIndex(numOfColors, numReductionColors)];
                 }
             }
         }
@@ -54,9 +62,9 @@ int generateOutputAFixed(int numOfColors, int numReductionColors, int* combinati
 }
 
 
-int generateOutput(int numOfColors, int numReductionColors, bool isAFixed, int* combinations, Output* output, long num_of_combs, Collections* givenRandArray) {
+int generateOutput(int numOfColors, int numReductionColors, bool isAFixed, int* combinations, Output* output, long num_of_combs, Collections* givenRandArray, int degree) {
     if(isAFixed) {
-        return generateOutputAFixed(numOfColors, numReductionColors, combinations, output, num_of_combs, givenRandArray);
+        return generateOutputAFixed(numOfColors, numReductionColors, combinations, output, num_of_combs, givenRandArray, degree);
     }
     return 0;
 }

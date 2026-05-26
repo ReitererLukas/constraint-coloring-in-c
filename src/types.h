@@ -30,4 +30,9 @@ struct Output {
     Collections* collections;
 };
 
+struct SharedSeedData {
+    pthread_mutex_t mutex;
+    unsigned long seed;
+};
+
 #endif

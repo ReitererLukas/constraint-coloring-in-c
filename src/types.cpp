@@ -32,7 +32,7 @@ int EdgeKey::toIndex(int numOfColors, int numColorsReduction) const {
 int NodeEdgeKey::toIndex(int degree) const {
     int edgeKeyAddition = this->edge.second - this->edge.first - 1;
 
-    if(this->node % 5 == 0) {
+    if(this->node % (degree+1) == 0) {
         return (this->node / (degree + 1)) * (degree * 2) + edgeKeyAddition;
     }
     return ((this->node - (this->node % (degree + 1))) / (degree + 1)) * (2 * degree) + (degree) + edgeKeyAddition;

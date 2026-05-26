@@ -36,9 +36,6 @@ bool checkNodeConstraint(NodeKey& node, Output* output, int degree) {
         }
         
         if(is_disjoint) {
-            std::cout << "Hello" << std::endl;
-            printCollections(*out2);
-            printCollections(*out1);
             return false;
         }
     }

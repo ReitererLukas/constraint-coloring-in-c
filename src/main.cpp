@@ -36,14 +36,9 @@ void loop() {
     
     BRandom rand;
     for(unsigned long i = 0; i < 3; i++) {
-        std::cout << "============ " << i << " ============" << std::endl;
-        long seed = rand.randLong();
+        unsigned long seed = rand.randLong();
         randomizeCollections(numReductionColors, givenRandArray, numberOfRandCollections, seed);
-        for(int j = 0; j< numberOfRandCollections; j++) {
-            std::cout << "Index: " << j << std::endl;
-            printCollections(givenRandArray[j]);
-        }
-        if(checkAllConstraints(numberOfNodes, output, degree, true)) {
+        if(checkAllConstraints(numberOfNodes, output, degree, false)) {
             std::cout << "seed: " << seed << std::endl;
         }
     }

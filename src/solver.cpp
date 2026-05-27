@@ -84,7 +84,6 @@ bool checkNodeConstraintNew(NodeKey& node, Output* output, int degree) {
                     if(isNotDisjoint) {
                         return true;
                     }
-                
                 }
             }
         }
@@ -137,19 +136,10 @@ bool checkIfAtLeastOneIsDisjoint(Collection& coll1, Collection& coll2) {
     for(auto s1 = coll1.begin(); s1 != coll1.end(); s1++) {
         for(auto s2 = coll2.begin(); s2 != coll2.end(); s2++) {
             if(isDisjoint(*s1, *s2)) {
-                // printSet(*s1);
-                // std::cout << std::endl;
-                // printSet(*s2);
-                // std::cout << std::endl;
-                // std::cout << "=============" << std::endl;
                 return true;
             }
         }
     }
-    // printVectorOfSets(coll1);
-    // std::cout << std::endl;
-    // printVectorOfSets(coll2);
-    // std::cout << std::endl;
 
     return false;
 }
@@ -180,7 +170,7 @@ bool checkAllConstraints(int numberOfNodes, Output* output, int degree, bool deb
     for(int node = 0; node < numberOfNodes; node += (degree+1)) {
         for(int i = 1; i <= degree; i++) {
             EdgeKey edge{node, node+i};
-            if(!checkEdgeConstraint(edge, output, degree)) {
+            if(!checkEdgeConstraintNew(edge, output, degree)) {
                 if(debug) {
                     std::cout << "Fail at edge (" << edge.first << "," << edge.second << ")" << std::endl;
                 }

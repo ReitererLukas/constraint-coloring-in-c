@@ -288,6 +288,96 @@ void advancedTest() {
     std::cout << "  ✓ basicNodeEdgeConstraintsFailEdges test passed" << std::endl;
 }
 
+void advancedTest2() {
+    std::cout << "Testing advancedTests2..." << std::endl;
+
+    int numOfColors = 8;
+    int numReductionColors = 5;
+    int degree = 4;
+
+    long num_of_combs = getNumberOfCombinations(numOfColors, degree);
+    long size_of_combs_arr = num_of_combs * degree;
+
+    Output* output = new Output[numOfColors*size_of_combs_arr*2];
+    int* combinations = new int[size_of_combs_arr];
+
+    int numberOfRandCollections = EdgeKey{numOfColors-1, numOfColors-2}.toIndex(numOfColors, numReductionColors) + 1;
+    Collections* givenRandArray = new Collections[numberOfRandCollections];
+
+    givenRandArray[EdgeKey{5,6}.toIndex(numOfColors, numReductionColors)] = Collections{
+        {{0}},
+        {{1}},
+        {{2}, {3}},
+        {{2}, {4}},
+        {{3}, {4}},
+        {{2,3}, {3,4}, {2,4}}
+    };
+
+    givenRandArray[EdgeKey{5,7}.toIndex(numOfColors, numReductionColors)] = Collections{
+        {{0}},
+        {{1}},
+        {{2}, {3}},
+        {{2}, {4}},
+        {{3}, {4}},
+        {{2,3}, {3,4}, {2,4}}
+    };
+
+    givenRandArray[EdgeKey{6,5}.toIndex(numOfColors, numReductionColors)] = Collections{
+        {{2}},
+        {{3}},
+        {{0}, {1}},
+        {{0}, {4}},
+        {{1}, {4}},
+        {{0,1}, {0,4}, {1,4}}
+    };
+
+    givenRandArray[EdgeKey{6,7}.toIndex(numOfColors, numReductionColors)] = Collections{
+        {{2}},
+        {{3}},
+        {{0}, {1}},
+        {{0}, {4}},
+        {{1}, {4}},
+        {{0,1}, {0,4}, {1,4}}
+    };
+
+    givenRandArray[EdgeKey{7,5}.toIndex(numOfColors, numReductionColors)] = Collections{
+        {{4}},
+        {{0}, {1}},
+        {{0}, {2}},
+        {{0}, {3}},
+        {{1}, {2}},
+        {{1}, {3}},
+        {{2}, {3}},
+        {{0,1}, {0,2}, {1,2}},
+        {{0,1}, {0,3}, {1,3}},
+        {{0,2}, {0,3}, {2,3}},
+        {{1,2}, {2,3}, {1,3}},
+        {{0,1,2}, {0,1,3}, {0,2,3}, {1,2,3}}
+    };
+
+    givenRandArray[EdgeKey{7,6}.toIndex(numOfColors, numReductionColors)] = Collections{
+        {{4}},
+        {{0}, {1}},
+        {{0}, {2}},
+        {{0}, {3}},
+        {{1}, {2}},
+        {{1}, {3}},
+        {{2}, {3}},
+        {{0,1}, {0,2}, {1,2}},
+        {{0,1}, {0,3}, {1,3}},
+        {{0,2}, {0,3}, {2,3}},
+        {{1,2}, {2,3}, {1,3}},
+        {{0,1,2}, {0,1,3}, {0,2,3}, {1,2,3}}
+    };
+
+    int numberOfNodes = generateOutput(numOfColors, numReductionColors, true, combinations, output, num_of_combs, givenRandArray, degree);
+
+    bool res = checkAllConstraints(numberOfNodes, output, degree, true);
+
+    assert(res);
+
+    std::cout << "  ✓ advancedTests2 test passed" << std::endl;
+}
 
 int main() {
     std::cout << "=== Running Solver Tests ===" << std::endl;
@@ -296,7 +386,8 @@ int main() {
         // testBasicNodeEdgeConstraints();
         // testBasicNodeEdgeConstraintsFailNodes();
         // testBasicNodeEdgeConstraintsFailEdges();
-        advancedTest();
+        // advancedTest();
+        advancedTest2();
         
         std::cout << "\n=== All tests passed! ===" << std::endl;
         return 0;

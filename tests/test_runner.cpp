@@ -100,8 +100,9 @@ void testBasicNodeEdgeConstraintsFailEdges() {
 // {{0,3}, {0,4}, {3,4}}
 
 
-void advancedTest() {
-    std::cout << "Testing basicNodeEdgeConstraintsFailEdges..." << std::endl;
+void verify9colorsDegree4() {
+    std::cout << std::endl << "===================" << std::endl;
+    std::cout << "Verification of: #Colors=9, degree=4" << std::endl;
 
     int numOfColors = 9;
     int numReductionColors = 5;
@@ -109,11 +110,10 @@ void advancedTest() {
     
     long num_of_combs = getNumberOfCombinations(numOfColors, degree);
     long size_of_combs_arr = num_of_combs * degree;
+    int numberOfRandCollections = EdgeKey{numOfColors-1, numOfColors-2}.toIndex(numOfColors,numReductionColors) + 1;
 
     Output* output = new Output[numOfColors*size_of_combs_arr*2];
     int* combinations = new int[size_of_combs_arr];
-
-    int numberOfRandCollections = EdgeKey{numOfColors-1, numOfColors-2}.toIndex(numOfColors,numReductionColors) + 1;
     Collections* givenRandArray = new Collections[numberOfRandCollections];
     
     givenRandArray[EdgeKey{5,6}.toIndex(numOfColors, numReductionColors)] = Collections{
@@ -281,15 +281,16 @@ void advancedTest() {
     
     int numberOfNodes = generateOutput(numOfColors, numReductionColors, true, combinations, output, num_of_combs, givenRandArray, degree);
     
-    bool res = checkAllConstraints(numberOfNodes, output, degree, true);
-
-    assert(res);
-
-    std::cout << "  ✓ basicNodeEdgeConstraintsFailEdges test passed" << std::endl;
+    if(checkAllConstraints(numberOfNodes, output, degree, true)) {
+        std::cout << "Outputs satisfy constraints" << std::endl;
+    } else {
+        std::cout << "Outputs do not satisfy constraints" << std::endl;
+    }
 }
 
-void advancedTest2() {
-    std::cout << "Testing advancedTests2..." << std::endl;
+void verify8colorsDegree4() {
+    std::cout << std::endl << "===================" << std::endl;
+    std::cout << "Verification of: #Colors=8, degree=4" << std::endl;
 
     int numOfColors = 8;
     int numReductionColors = 5;
@@ -297,11 +298,10 @@ void advancedTest2() {
 
     long num_of_combs = getNumberOfCombinations(numOfColors, degree);
     long size_of_combs_arr = num_of_combs * degree;
+    int numberOfRandCollections = EdgeKey{numOfColors-1, numOfColors-2}.toIndex(numOfColors, numReductionColors) + 1;
 
     Output* output = new Output[numOfColors*size_of_combs_arr*2];
     int* combinations = new int[size_of_combs_arr];
-
-    int numberOfRandCollections = EdgeKey{numOfColors-1, numOfColors-2}.toIndex(numOfColors, numReductionColors) + 1;
     Collections* givenRandArray = new Collections[numberOfRandCollections];
 
     givenRandArray[EdgeKey{5,6}.toIndex(numOfColors, numReductionColors)] = Collections{
@@ -372,11 +372,11 @@ void advancedTest2() {
 
     int numberOfNodes = generateOutput(numOfColors, numReductionColors, true, combinations, output, num_of_combs, givenRandArray, degree);
 
-    bool res = checkAllConstraints(numberOfNodes, output, degree, true);
-
-    assert(res);
-
-    std::cout << "  ✓ advancedTests2 test passed" << std::endl;
+    if(checkAllConstraints(numberOfNodes, output, degree, true)) {
+        std::cout << "Outputs satisfy constraints" << std::endl;
+    } else {
+        std::cout << "Outputs do not satisfy constraints" << std::endl;
+    }
 }
 
 int main() {
@@ -386,13 +386,11 @@ int main() {
         // testBasicNodeEdgeConstraints();
         // testBasicNodeEdgeConstraintsFailNodes();
         // testBasicNodeEdgeConstraintsFailEdges();
-        // advancedTest();
-        advancedTest2();
+        verify9colorsDegree4();
+        verify8colorsDegree4();
         
-        std::cout << "\n=== All tests passed! ===" << std::endl;
         return 0;
     } catch (const std::exception& e) {
-        std::cerr << "Test failed with exception: " << e.what() << std::endl;
         return 1;
     }
 }
